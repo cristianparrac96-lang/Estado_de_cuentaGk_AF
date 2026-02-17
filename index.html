@@ -25,7 +25,7 @@
 
         /* BUSCADOR CENTRAL */
         #search-portal {
-            position: fixed; /* Inicia fijo al centro */
+            position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
@@ -35,9 +35,8 @@
             z-index: 100;
         }
 
-        /* Al buscar, deja de ser fijo y se mueve al tope */
         #search-portal.minimized {
-            position: absolute; /* Cambia a absoluto para que se desplace al hacer scroll */
+            position: absolute;
             top: 40px;
             transform: translate(-50%, 0);
             max-width: 450px;
@@ -59,10 +58,9 @@
             font-size: 18px; width: 100%; outline: none; text-align: center;
         }
 
-        /* FIX LOGO (Eliminar fondo blanco mediante mezcla) */
+        /* FIX LOGO PORTAL */
         .logo-portal {
             height: 70px;
-            /* Este filtro ayuda a que el blanco se vuelva transparente sobre fondo oscuro */
             mix-blend-mode: lighten; 
             filter: contrast(110%);
         }
@@ -70,7 +68,7 @@
         /* CONTENEDOR PRINCIPAL */
         .main-container {
             max-width: 1100px;
-            margin: 280px auto 50px auto; /* Más espacio arriba para que no choque con buscador */
+            margin: 280px auto 50px auto;
             padding: 0 20px;
             display: none;
         }
@@ -95,7 +93,7 @@
         label { font-size: 9px; font-weight: 600; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; }
         input { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); padding: 12px; border-radius: 12px; color: white; }
 
-        /* BOTONES CYBERPUNK */
+        /* BOTONES */
         .btn-neon {
             background: var(--gk-gradient);
             color: white; border: none; padding: 12px 25px; border-radius: 12px;
@@ -107,26 +105,48 @@
 
         #btn-sync { display: none; width: 100%; margin-top: 15px; background: #2563eb; }
 
-        /* DOCUMENTO PDF (Uniforme y Blanco para cliente) */
+        /* DOCUMENTO PDF (DISEÑO REFINADO) */
         .document-page {
-            background: white; color: #1a2a3a; padding: 15mm; margin-top: 40px;
+            background: white; color: #1a2a3a; padding: 20mm; margin-top: 40px;
             border-radius: 12px; box-shadow: 0 0 50px rgba(0,0,0,0.5); width: 215.9mm; min-height: 279.4mm; margin-inline: auto;
         }
 
-        .header-container { border-bottom: 2px solid #1a2a3a; padding-bottom: 20px; margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; }
-        .logo-row { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        
-        /* En el PDF usamos multiply para que el logo se vea bien en papel blanco */
+        .header-container { border-bottom: 2px solid #1a2a3a; padding-bottom: 20px; margin-bottom: 30px; display: flex; flex-direction: column; align-items: center; }
+        .logo-row { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .logo-img-doc { max-height: 50px; max-width: 160px; object-fit: contain; mix-blend-mode: multiply; }
-        
+        .header-title h1 { margin: 0; color: #1a2a3a; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+
+        /* INFORMACIÓN DEL CLIENTE (EQUILIBRADA) */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 35px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background-color: #fcfcfc;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label { font-weight: 600; color: #64748b; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .info-value { font-size: 14px; color: #1a2a3a; font-weight: 500; }
+
         table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        th { padding: 8px; border-bottom: 1px solid #e2e8f0; color: #64748b; font-size: 9px; text-transform: uppercase; }
-        td { padding: 10px; border-bottom: 1px solid #f1f5f9; text-align: center; }
+        th { padding: 10px; border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 9px; text-transform: uppercase; }
+        td { padding: 12px; border-bottom: 1px solid #f1f5f9; text-align: center; }
+
+        .fila-totales { background-color: #f8fafc !important; font-weight: bold; font-size: 13px; border-top: 2px solid #1a2a3a; }
 
         @media print {
             .no-print, #search-portal, .action-col { display: none !important; }
             body { background: white; padding: 0; }
-            .document-page { box-shadow: none; margin: 0; width: 100%; padding: 10mm; }
+            .document-page { box-shadow: none; margin: 0; width: 100%; padding: 10mm; border-radius: 0; }
         }
     </style>
 </head>
@@ -182,12 +202,26 @@
                 </div>
                 <div class="header-title"><h1>INFORMACIÓN DE ACUERDO DE PAGO</h1></div>
             </header>
+
             <div class="info-grid">
-                <div><span class="info-label">Nro. Documento:</span><div class="info-value" id="outDoc">---</div></div>
-                <div><span class="info-label">Nombre Cliente:</span><div class="info-value" id="outNombre">---</div></div>
-                <div><span class="info-label">Fondo:</span><div class="info-value" id="outFondo">---</div></div>
-                <div><span class="info-label">Emisión:</span><div class="info-value" id="outEmision">---</div></div>
+                <div class="info-item">
+                    <span class="info-label">Nro. Documento</span>
+                    <div class="info-value" id="outDoc">---</div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Fondo de Origen</span>
+                    <div class="info-value" id="outFondo">---</div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Nombre del Cliente</span>
+                    <div class="info-value" id="outNombre">---</div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Fecha de Emisión</span>
+                    <div class="info-value" id="outEmision">---</div>
+                </div>
             </div>
+
             <table>
                 <thead>
                     <tr>
@@ -288,7 +322,8 @@
 
             for(let i=0; i<num; i++) {
                 let d = new Date(baseDate.getFullYear(), baseDate.getMonth() + i, 1);
-                let diaFinal = Math.min(diaDeseado, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate());
+                let ultimoDiaMes = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+                let diaFinal = Math.min(diaDeseado, ultimoDiaMes);
                 let fechaPactada = ajustarDiaHabil(new Date(d.getFullYear(), d.getMonth(), diaFinal));
                 window.cuotas.push({
                     fechaAc: fechaPactada.toISOString().split('T')[0],
