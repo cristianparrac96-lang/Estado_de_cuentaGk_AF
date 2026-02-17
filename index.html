@@ -58,7 +58,6 @@
             font-size: 18px; width: 100%; outline: none; text-align: center;
         }
 
-        /* FIX LOGO PORTAL */
         .logo-portal {
             height: 70px;
             mix-blend-mode: lighten; 
@@ -91,7 +90,7 @@
         .input-group { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; align-items: flex-end; }
         .input-field { display: flex; flex-direction: column; flex: 1; min-width: 180px; }
         label { font-size: 9px; font-weight: 600; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; }
-        input { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); padding: 12px; border-radius: 12px; color: white; }
+        input { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); padding: 12px; border-radius: 12px; color: white; font-size: 14px; }
 
         /* BOTONES */
         .btn-neon {
@@ -105,7 +104,7 @@
 
         #btn-sync { display: none; width: 100%; margin-top: 15px; background: #2563eb; }
 
-        /* DOCUMENTO PDF (DISEÑO REFINADO) */
+        /* DOCUMENTO PDF */
         .document-page {
             background: white; color: #1a2a3a; padding: 20mm; margin-top: 40px;
             border-radius: 12px; box-shadow: 0 0 50px rgba(0,0,0,0.5); width: 215.9mm; min-height: 279.4mm; margin-inline: auto;
@@ -116,7 +115,6 @@
         .logo-img-doc { max-height: 50px; max-width: 160px; object-fit: contain; mix-blend-mode: multiply; }
         .header-title h1 { margin: 0; color: #1a2a3a; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
 
-        /* INFORMACIÓN DEL CLIENTE (EQUILIBRADA) */
         .info-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -128,12 +126,7 @@
             background-color: #fcfcfc;
         }
 
-        .info-item {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
+        .info-item { display: flex; flex-direction: column; gap: 4px; }
         .info-label { font-weight: 600; color: #64748b; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
         .info-value { font-size: 14px; color: #1a2a3a; font-weight: 500; }
 
@@ -166,31 +159,40 @@
 
     <div class="main-container" id="main-content">
         
-        <div id="setup-module" class="glass-card" style="display: none;">
-            <div class="section-title">Inicializar Nuevo Acuerdo</div>
+        <!-- MÓDULO EDITAR / ACTUALIZAR -->
+        <div id="edit-module" class="glass-card">
+            <div class="section-title">Panel de Gestión de Acuerdo</div>
+            
+            <!-- DATOS BÁSICOS EDITABLES -->
             <div class="input-group">
                 <div class="input-field"><label>Nombre Cliente</label><input type="text" id="inNombre" oninput="actualizarEncabezado(); detectarCambio()"></div>
                 <div class="input-field"><label>Fondo</label><input type="text" id="inFondo" oninput="actualizarEncabezado(); detectarCambio()"></div>
+                <div class="input-field"><label>Deuda Total (Objetivo)</label><input type="number" id="genMonto" oninput="detectarCambio()"></div>
             </div>
-            <div class="input-group">
-                <div class="input-field"><label>Deuda Total</label><input type="number" id="genMonto"></div>
-                <div class="input-field"><label>Nro Cuotas</label><input type="number" id="genCuotas"></div>
-                <div class="input-field"><label>Fecha Inicial</label><input type="date" id="genFecha"></div>
-                <button class="btn-neon" onclick="generarPlan()">Iniciar Plan</button>
-            </div>
-        </div>
 
-        <div id="edit-module" class="glass-card" style="display: none;">
-            <div class="section-title">Modulación de Acuerdo</div>
-            <div class="input-group">
-                <input type="hidden" id="editIndex">
-                <div class="input-field"><label>Fecha Pactada</label><input type="date" id="fAc"></div>
-                <div class="input-field"><label>Valor Cuota</label><input type="number" id="vAc"></div>
-                <div class="input-field"><label>Fecha Pago Real</label><input type="date" id="fRe"></div>
-                <div class="input-field"><label>Valor Recibido</label><input type="number" id="vRe"></div>
-                <button class="btn-neon" onclick="guardarCambios()">Equilibrar Saldo</button>
+            <!-- EDITOR DE CUOTAS ESPECÍFICO -->
+            <div id="specific-editor" style="border-top: 1px solid var(--border-glass); padding-top: 20px; margin-top: 10px;">
+                <label style="color: var(--gk-magenta); display: block; margin-bottom: 15px;">Editor de Cuota Seleccionada:</label>
+                <div class="input-group">
+                    <input type="hidden" id="editIndex">
+                    <div class="input-field"><label>Fecha Pactada</label><input type="date" id="fAc"></div>
+                    <div class="input-field"><label>Valor Cuota</label><input type="number" id="vAc"></div>
+                    <div class="input-field"><label>Fecha Pago Real</label><input type="date" id="fRe"></div>
+                    <div class="input-field"><label>Valor Recibido</label><input type="number" id="vRe"></div>
+                    <button class="btn-neon" onclick="guardarCambios()">Equilibrar Saldo</button>
+                </div>
             </div>
-            <button id="btn-sync" class="btn-neon" onclick="guardarEnNube()">☁ Sincronizar Cambios en la Nube</button>
+
+            <!-- MÓDULO SETUP (Solo se muestra para clientes nuevos para generar las cuotas iniciales) -->
+            <div id="setup-controls" style="display: none; border-top: 1px solid var(--border-glass); padding-top: 20px;">
+                <div class="input-group">
+                    <div class="input-field"><label>Nro Cuotas</label><input type="number" id="genCuotas"></div>
+                    <div class="input-field"><label>Fecha Inicial</label><input type="date" id="genFecha"></div>
+                    <button class="btn-neon" onclick="generarPlan()">Generar Plan Inicial</button>
+                </div>
+            </div>
+
+            <button id="btn-sync" class="btn-neon" onclick="guardarEnNube()">☁ Guardar y Sincronizar en la Nube</button>
         </div>
 
         <!-- DOCUMENTO -->
@@ -204,22 +206,10 @@
             </header>
 
             <div class="info-grid">
-                <div class="info-item">
-                    <span class="info-label">Nro. Documento</span>
-                    <div class="info-value" id="outDoc">---</div>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Fondo de Origen</span>
-                    <div class="info-value" id="outFondo">---</div>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Nombre del Cliente</span>
-                    <div class="info-value" id="outNombre">---</div>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Fecha de Emisión</span>
-                    <div class="info-value" id="outEmision">---</div>
-                </div>
+                <div class="info-item"><span class="info-label">Nro. Documento</span><div class="info-value" id="outDoc">---</div></div>
+                <div class="info-item"><span class="info-label">Fondo de Origen</span><div class="info-value" id="outFondo">---</div></div>
+                <div class="info-item"><span class="info-label">Nombre del Cliente</span><div class="info-value" id="outNombre">---</div></div>
+                <div class="info-item"><span class="info-label">Fecha de Emisión</span><div class="info-value" id="outEmision">---</div></div>
             </div>
 
             <table>
@@ -240,7 +230,6 @@
         </div>
     </div>
 
-    <!-- FIREBASE & LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -280,14 +269,14 @@
                     document.getElementById('genMonto').value = data.deudaTotal;
                     window.DEUDA_TOTAL = data.deudaTotal;
                     window.cuotas = data.cuotas;
-                    document.getElementById('edit-module').style.display = 'block';
-                    document.getElementById('setup-module').style.display = 'none';
+                    document.getElementById('setup-controls').style.display = 'none';
                     actualizarEncabezado();
                     renderizarTabla();
                 } else {
                     if(confirm("Documento no registrado. ¿Desea iniciar un acuerdo nuevo?")) {
-                        document.getElementById('setup-module').style.display = 'block';
-                        document.getElementById('edit-module').style.display = 'none';
+                        document.getElementById('setup-controls').style.display = 'block';
+                        window.cuotas = [];
+                        renderizarTabla();
                     }
                 }
             });
@@ -331,7 +320,6 @@
                     manual: false, fechaReal: "", valorReal: 0
                 });
             }
-            document.getElementById('edit-module').style.display = 'block';
             detectarCambio(); actualizarEncabezado(); renderizarTabla();
         };
 
@@ -342,17 +330,20 @@
             document.getElementById('vAc').value = c.valorAc;
             document.getElementById('fRe').value = c.fechaReal;
             document.getElementById('vRe').value = c.valorReal;
-            window.scrollTo({top: 100, behavior: 'smooth'});
         };
 
         window.guardarCambios = function() {
             const idx = parseInt(document.getElementById('editIndex').value);
+            // Actualizamos el Valor Objetivo por si el usuario lo cambió arriba
+            window.DEUDA_TOTAL = parseFloat(document.getElementById('genMonto').value);
+            
             window.cuotas[idx].fechaAc = document.getElementById('fAc').value;
             window.cuotas[idx].valorAc = parseFloat(document.getElementById('vAc').value);
             window.cuotas[idx].manual = true; 
             window.cuotas[idx].fechaReal = document.getElementById('fRe').value;
             window.cuotas[idx].valorReal = parseFloat(document.getElementById('vRe').value || 0);
 
+            // Balanceo Global
             let sumaManuales = 0; let autos = [];
             window.cuotas.forEach((c, i) => { if(c.manual) sumaManuales += c.valorAc; else autos.push(i); });
             if (autos.length > 0) {
@@ -395,9 +386,15 @@
 
         window.guardarEnNube = function() {
             const doc = document.getElementById('main-search').value;
-            const data = { doc: doc, nombre: document.getElementById('inNombre').value, fondo: document.getElementById('inFondo').value, deudaTotal: window.DEUDA_TOTAL, cuotas: window.cuotas };
+            const data = { 
+                doc: doc, 
+                nombre: document.getElementById('inNombre').value, 
+                fondo: document.getElementById('inFondo').value, 
+                deudaTotal: parseFloat(document.getElementById('genMonto').value), 
+                cuotas: window.cuotas 
+            };
             set(ref(db, 'clientes/' + doc), data).then(() => {
-                alert("Base de Datos Sincronizada.");
+                alert("Actualización exitosa en la Nube.");
                 document.getElementById('btn-sync').style.display = 'none';
             });
         };
