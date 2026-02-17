@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de acuerdos - GK - AF </title>
+    <title>GoKollect - Quantum Billing & Database</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -24,11 +24,9 @@
             min-height: 100vh;
         }
 
-        /* INTERFAZ FUTURISTA (PANTALLA) */
         .input-section {
             background: var(--glass);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border-glass);
             padding: 30px;
             max-width: 1100px;
@@ -39,118 +37,60 @@
         }
 
         .input-section::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 3px;
-            background: var(--gk-gradient);
-            border-radius: 24px 24px 0 0;
+            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: var(--gk-gradient); border-radius: 24px 24px 0 0;
         }
 
         .section-title {
-            font-size: 14px;
-            font-weight: 600;
-            background: var(--gk-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-size: 14px; font-weight: 600; background: var(--gk-gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;
         }
 
         .input-group { margin-bottom: 25px; display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; }
-        .input-field { display: flex; flex-direction: column; flex: 1; min-width: 180px; }
+        .input-field { display: flex; flex-direction: column; flex: 1; min-width: 180px; position: relative; }
         
-        label { 
-            font-size: 10px; 
-            font-weight: 600; 
-            margin-bottom: 8px; 
-            color: var(--gk-cyan); 
-            text-transform: uppercase; 
-            letter-spacing: 1px;
-        }
+        label { font-size: 10px; font-weight: 600; margin-bottom: 8px; color: var(--gk-cyan); text-transform: uppercase; }
 
         input { 
-            background: rgba(0,0,0,0.3); 
-            border: 1px solid var(--border-glass); 
-            padding: 12px; 
-            border-radius: 12px; 
-            color: white; 
-            font-size: 14px;
-            transition: 0.3s;
+            background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); 
+            padding: 12px; border-radius: 12px; color: white; font-size: 14px; transition: 0.3s;
         }
 
-        input:focus {
-            outline: none;
-            border-color: var(--gk-cyan);
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.15);
-        }
+        input:focus { outline: none; border-color: var(--gk-cyan); box-shadow: 0 0 15px rgba(0, 212, 255, 0.15); }
 
-        /* BOTONES NEÓN */
         .btn-neon { 
-            padding: 12px 24px; 
-            cursor: pointer; 
-            border: none; 
-            border-radius: 12px; 
-            font-weight: 600; 
-            transition: 0.4s; 
-            text-transform: uppercase;
-            font-size: 12px;
-            letter-spacing: 1px;
-            background: var(--gk-gradient); 
-            color: white; 
-            box-shadow: 0 8px 15px -5px rgba(255, 0, 127, 0.4);
-            white-space: nowrap;
-            height: 43px; 
+            padding: 12px 24px; cursor: pointer; border: none; border-radius: 12px; 
+            font-weight: 600; transition: 0.4s; text-transform: uppercase; font-size: 12px;
+            background: var(--gk-gradient); color: white; box-shadow: 0 8px 15px -5px rgba(255, 0, 127, 0.4);
+            height: 43px;
         }
 
-        .btn-neon:hover { 
-            transform: translateY(-3px); 
-            box-shadow: 0 12px 25px -5px rgba(255, 0, 127, 0.6); 
-        }
+        .btn-neon:hover { transform: translateY(-3px); box-shadow: 0 12px 25px -5px rgba(255, 0, 127, 0.6); }
+
+        .btn-cloud { background: #2563eb; margin-top: 10px; width: 100%; }
 
         .btn-print { 
-            background: transparent; 
-            border: 1px solid var(--gk-cyan);
-            color: var(--gk-cyan);
-            width: 100%; 
-            margin-top: 30px; 
-            height: 55px;
-            font-size: 14px;
-            border-radius: 12px;
-            text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: 0.3s;
+            background: transparent; border: 1px solid var(--gk-cyan); color: var(--gk-cyan);
+            width: 100%; margin-top: 20px; height: 55px; font-size: 14px; border-radius: 12px;
+            text-transform: uppercase; font-weight: 600; cursor: pointer; transition: 0.3s;
         }
 
         .btn-print:hover { background: var(--gk-cyan); color: #000; box-shadow: 0 0 20px rgba(0, 212, 255, 0.4); }
 
-        /* DOCUMENTO PDF (BLANCO) */
+        /* Aviso de Búsqueda */
+        #db-status { font-size: 10px; position: absolute; top: -15px; right: 0; font-weight: bold; }
+
+        /* DOCUMENTO PDF */
         .document-page {
-            background: white;
-            color: #1a2a3a;
-            width: 215.9mm;
-            min-height: 279.4mm;
-            padding: 20mm;
-            margin: auto;
-            border-radius: 12px;
-            box-shadow: 0 0 40px rgba(0,0,0,0.3);
-            box-sizing: border-box;
+            background: white; color: #1a2a3a; width: 215.9mm; min-height: 279.4mm;
+            padding: 20mm; margin: auto; border-radius: 12px; box-shadow: 0 0 40px rgba(0,0,0,0.3); box-sizing: border-box;
         }
 
-        .header-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border-bottom: 2px solid #1a2a3a;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-
+        .header-container { display: flex; flex-direction: column; align-items: center; border-bottom: 2px solid #1a2a3a; padding-bottom: 20px; margin-bottom: 30px; }
         .logo-row { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .logo-img { max-height: 55px; max-width: 180px; object-fit: contain; }
-        .header-title h1 { margin: 0; color: #1a2a3a; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .header-title h1 { margin: 0; color: #1a2a3a; font-size: 18px; text-transform: uppercase; text-align: center; }
 
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; padding: 15px; border: 1px solid #e2e8f0; border-radius: 12px; }
         .info-label { font-weight: 600; color: #64748b; font-size: 10px; text-transform: uppercase; }
@@ -174,7 +114,11 @@
     <div class="input-section no-print">
         <div class="section-title">Información para Acuerdo de Pago</div>
         <div class="input-group">
-            <div class="input-field"><label>Nro. Documento</label><input type="text" id="inDoc" oninput="actualizarEncabezado()"></div>
+            <div class="input-field">
+                <label>Nro. Documento</label>
+                <input type="text" id="inDoc" oninput="buscarEnNube()">
+                <div id="db-status"></div>
+            </div>
             <div class="input-field"><label>Nombre del Cliente</label><input type="text" id="inNombre" oninput="actualizarEncabezado()"></div>
             <div class="input-field"><label>Fondo de Empleados</label><input type="text" id="inFondo" oninput="actualizarEncabezado()"></div>
         </div>
@@ -182,7 +126,7 @@
             <div class="input-field"><label>Deuda Total Exacta</label><input type="number" id="genMonto"></div>
             <div class="input-field"><label>Nro de Cuotas</label><input type="number" id="genCuotas"></div>
             <div class="input-field"><label>Fecha Inicial</label><input type="date" id="genFecha"></div>
-            <button class="btn-neon" onclick="generarPlan()">Inicializar Plan de Pagos</button>
+            <button class="btn-neon" onclick="generarPlan()">Iniciar Plan</button>
         </div>
 
         <div id="editorSeccion" style="display:none; border-top: 1px solid var(--border-glass); padding-top: 25px; margin-top: 20px;">
@@ -195,21 +139,20 @@
                 <div class="input-field"><label>Valor Recibido</label><input type="number" id="vRe"></div>
                 <button class="btn-neon" onclick="guardarCambios()">Equilibrar Saldo</button>
             </div>
+            <button class="btn-neon btn-cloud" onclick="guardarEnNube()">☁ Sincronizar en la Nube</button>
         </div>
         
-        <button class="btn-print" onclick="window.print()">Exportar Simulación de Acuerdo (PDF)</button>
+        <button class="btn-print" onclick="window.print()">Exportar Simulación (PDF)</button>
     </div>
 
     <!-- DOCUMENTO -->
     <div class="document-page">
         <header class="header-container">
             <div class="logo-row">
-                <img src="img/Logo_GK.png" alt="Logo GK" class="logo-img" onerror="this.style.display='none'">
-                <img src="img/Logo_AF.png" alt="Logo AF" class="logo-img" onerror="this.style.display='none'">
+                <img src="Logo_GK.png" alt="Logo GK" class="logo-img">
+                <img src="Logo_AF.png" alt="Logo AF" class="logo-img">
             </div>
-            <div class="header-title">
-                <h1>INFORMACIÓN DE ACUERDO DE PAGO</h1>
-            </div>
+            <div class="header-title"><h1>INFORMACIÓN DE ACUERDO DE PAGO</h1></div>
         </header>
 
         <div class="info-grid">
@@ -245,107 +188,111 @@
         </table>
     </div>
 
-    <script>
-        let cuotas = [];
-        let DEUDA_TOTAL_OBJETIVO = 0;
-        
-        // 1. Obtener fecha real
+    <!-- CONFIGURACIÓN FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAtCfbyanD34rsy_7sVaagDnzn4idWtjfk",
+            authDomain: "cobranzas-gk.firebaseapp.com",
+            databaseURL: "https://cobranzas-gk-default-rtdb.firebaseio.com",
+            projectId: "cobranzas-gk",
+            storageBucket: "cobranzas-gk.firebasestorage.app",
+            messagingSenderId: "172059679640",
+            appId: "1:172059679640:web:7c55b13a678457c88729ed"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- LÓGICA DE NEGOCIO ---
+        window.cuotas = [];
+        window.DEUDA_TOTAL_OBJETIVO = 0;
         const hoy = new Date();
         const formatoMoneda = new Intl.NumberFormat('es-CO', {style: 'currency', currency: 'COP', minimumFractionDigits: 0});
 
-        // 2. INYECTAR FECHA DE HOY AL CARGAR
-        document.getElementById('outEmision').innerText = hoy.toLocaleDateString('es-CO', {
-            day: '2-digit', 
-            month: '2-digit', 
-            year: 'numeric'
-        });
+        document.getElementById('outEmision').innerText = hoy.toLocaleDateString('es-CO', {day:'2-digit', month:'2-digit', year:'numeric'});
 
-        function actualizarEncabezado() {
+        window.actualizarEncabezado = function() {
             document.getElementById('outDoc').innerText = document.getElementById('inDoc').value || '---';
             document.getElementById('outNombre').innerText = document.getElementById('inNombre').value.toUpperCase() || '---';
             document.getElementById('outFondo').innerText = document.getElementById('inFondo').value.toUpperCase() || '---';
-        }
+        };
 
-        function ajustarDiaHabilAnterior(fecha) {
+        function ajustarDiaHabil(fecha) {
             let d = fecha.getDay();
             if (d === 0) fecha.setDate(fecha.getDate() - 2); 
             else if (d === 6) fecha.setDate(fecha.getDate() - 1);
             return fecha;
         }
 
-        function generarPlan() {
-            DEUDA_TOTAL_OBJETIVO = parseFloat(document.getElementById('genMonto').value);
+        window.generarPlan = function() {
+            window.DEUDA_TOTAL_OBJETIVO = parseFloat(document.getElementById('genMonto').value);
             const num = parseInt(document.getElementById('genCuotas').value);
             const startStr = document.getElementById('genFecha').value;
+            if(!window.DEUDA_TOTAL_OBJETIVO || !num || !startStr) return alert("Faltan datos.");
 
-            if(!DEUDA_TOTAL_OBJETIVO || !num || !startStr) return alert("Parámetros incompletos.");
-
-            cuotas = [];
+            window.cuotas = [];
             const baseDate = new Date(startStr + "T00:00:00");
             const diaDeseado = baseDate.getDate();
-            const valorBase = Math.floor(DEUDA_TOTAL_OBJETIVO / num);
-            const residuo = DEUDA_TOTAL_OBJETIVO % num;
+            const valorBase = Math.floor(window.DEUDA_TOTAL_OBJETIVO / num);
+            const residuo = window.DEUDA_TOTAL_OBJETIVO % num;
 
             for(let i=0; i<num; i++) {
                 let d = new Date(baseDate.getFullYear(), baseDate.getMonth() + i, 1);
                 let ultimoDia = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
                 let diaFinal = Math.min(diaDeseado, ultimoDia);
-                let fechaPactada = ajustarDiaHabilAnterior(new Date(d.getFullYear(), d.getMonth(), diaFinal));
+                let fechaPactada = ajustarDiaHabil(new Date(d.getFullYear(), d.getMonth(), diaFinal));
 
-                cuotas.push({
+                window.cuotas.push({
                     fechaAc: fechaPactada.toISOString().split('T')[0],
                     valorAc: (i === num - 1) ? (valorBase + residuo) : valorBase,
-                    manual: false,
-                    fechaReal: "",
-                    valorReal: 0
+                    manual: false, fechaReal: "", valorReal: 0
                 });
             }
             document.getElementById('editorSeccion').style.display = 'block';
             renderizarTabla();
-        }
+        };
 
-        function editar(i) {
-            const c = cuotas[i];
+        window.editar = function(i) {
+            const c = window.cuotas[i];
             document.getElementById('editIndex').value = i;
             document.getElementById('fAc').value = c.fechaAc;
             document.getElementById('vAc').value = c.valorAc;
             document.getElementById('fRe').value = c.fechaReal;
             document.getElementById('vRe').value = c.valorReal;
             window.scrollTo({top: 0, behavior: 'smooth'});
-        }
+        };
 
-        function guardarCambios() {
+        window.guardarCambios = function() {
             const idx = parseInt(document.getElementById('editIndex').value);
-            cuotas[idx].fechaAc = document.getElementById('fAc').value;
-            cuotas[idx].valorAc = parseFloat(document.getElementById('vAc').value);
-            cuotas[idx].manual = true; 
-            cuotas[idx].fechaReal = document.getElementById('fRe').value;
-            cuotas[idx].valorReal = parseFloat(document.getElementById('vRe').value || 0);
+            window.cuotas[idx].fechaAc = document.getElementById('fAc').value;
+            window.cuotas[idx].valorAc = parseFloat(document.getElementById('vAc').value);
+            window.cuotas[idx].manual = true; 
+            window.cuotas[idx].fechaReal = document.getElementById('fRe').value;
+            window.cuotas[idx].valorReal = parseFloat(document.getElementById('vRe').value || 0);
 
-            let sumaManuales = 0;
-            let indicesAutos = [];
-            cuotas.forEach((c, i) => {
-                if(c.manual) sumaManuales += c.valorAc;
-                else indicesAutos.push(i);
+            let sumaManuales = 0; let indicesAutos = [];
+            window.cuotas.forEach((c, i) => {
+                if(c.manual) sumaManuales += c.valorAc; else indicesAutos.push(i);
             });
 
             if (indicesAutos.length > 0) {
-                let saldo = DEUDA_TOTAL_OBJETIVO - sumaManuales;
+                let saldo = window.DEUDA_TOTAL_OBJETIVO - sumaManuales;
                 let valorAuto = Math.floor(saldo / indicesAutos.length);
                 let residuoAuto = saldo % indicesAutos.length;
                 indicesAutos.forEach((pos, i) => {
-                    cuotas[pos].valorAc = (i === indicesAutos.length - 1) ? (valorAuto + residuoAuto) : valorAuto;
+                    window.cuotas[pos].valorAc = (i === indicesAutos.length - 1) ? (valorAuto + residuoAuto) : valorAuto;
                 });
             }
             renderizarTabla();
-        }
+        };
 
         function renderizarTabla() {
             const tbody = document.getElementById('tablaCuerpo');
-            tbody.innerHTML = "";
-            let s1 = 0, s2 = 0;
-
-            cuotas.forEach((c, i) => {
+            tbody.innerHTML = ""; let s1 = 0, s2 = 0;
+            window.cuotas.forEach((c, i) => {
                 s1 += c.valorAc; s2 += c.valorReal;
                 const fAc = new Date(c.fechaAc + "T00:00:00");
                 let diffHtml = "---";
@@ -354,9 +301,7 @@
                     diffHtml = diff > 0 ? `<span style="color:#e11d48; font-weight:bold;">+${diff}</span>` : `<span style="color:#059669; font-weight:bold;">${diff}</span>`;
                 } else if (fAc < hoy) {
                     diffHtml = `<span style="color:#e11d48; font-weight:bold;">+${Math.round((hoy - fAc) / 86400000)}</span>`;
-                } else {
-                    diffHtml = `<span style="color:#2563eb; font-weight:bold;">Vigente</span>`;
-                }
+                } else { diffHtml = `<span style="color:#2563eb; font-weight:bold;">Vigente</span>`; }
 
                 tbody.innerHTML += `
                     <tr>
@@ -367,19 +312,63 @@
                         <td>${c.fechaReal ? c.fechaReal.split('-').reverse().join('/') : '<span style="color:#d97706;font-weight:bold;">PENDIENTE</span>'}</td>
                         <td>${formatoMoneda.format(c.valorReal)}</td>
                         <td>${diffHtml}</td>
-                        <td class="action-col no-print"><button onclick="editar(${i})" style="background:#334155; color:white; padding:4px 8px; border-radius:6px; font-size:10px; border:none; cursor:pointer;">Edit</button></td>
+                        <td class="action-col no-print"><button onclick="editar(${i})" style="background:#334155; color:white; padding:4px 8px; border-radius:6px; border:none; cursor:pointer;">Edit</button></td>
                     </tr>`;
             });
-
-            document.getElementById('tablaTotales').innerHTML = `
-                <tr class="fila-totales">
-                    <td colspan="2" style="text-align:right">SALDO TOTAL CONCILIADO</td>
-                    <td>${formatoMoneda.format(s1)}</td>
-                    <td colspan="2"></td>
-                    <td>${formatoMoneda.format(s2)}</td>
-                    <td colspan="2"></td>
-                </tr>`;
+            document.getElementById('tablaTotales').innerHTML = `<tr class="fila-totales"><td colspan="2" style="text-align:right">SALDO TOTAL</td><td>${formatoMoneda.format(s1)}</td><td colspan="2"></td><td>${formatoMoneda.format(s2)}</td><td colspan="2"></td></tr>`;
         }
+
+        // --- FUNCIONES CLOUD (FIREBASE) ---
+        window.guardarEnNube = function() {
+            const doc = document.getElementById('inDoc').value;
+            if(!doc) return alert("Ingresa un documento para guardar.");
+            
+            const data = {
+                doc: doc,
+                nombre: document.getElementById('inNombre').value,
+                fondo: document.getElementById('inFondo').value,
+                deudaTotal: window.DEUDA_TOTAL_OBJETIVO,
+                cuotas: window.cuotas
+            };
+
+            set(ref(db, 'clientes/' + doc), data)
+                .then(() => alert("✅ Sincronizado correctamente en la nube."))
+                .catch((error) => alert("❌ Error: " + error));
+        };
+
+        window.buscarEnNube = function() {
+            actualizarEncabezado();
+            const doc = document.getElementById('inDoc').value;
+            const status = document.getElementById('db-status');
+            if(doc.length < 5) { status.innerText = ""; return; }
+
+            status.style.color = "var(--gk-cyan)"; status.innerText = "Buscando...";
+
+            const dbRef = ref(getDatabase());
+            get(child(dbRef, `clientes/${doc}`)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    status.style.color = "#22c55e";
+                    status.innerHTML = `¡Encontrado! <button onclick="cargarCliente('${doc}')" style="background:none; border:none; color:white; text-decoration:underline; cursor:pointer; font-size:10px;">CARGAR</button>`;
+                } else {
+                    status.style.color = "#94a3b8"; status.innerText = "Nuevo Registro";
+                }
+            });
+        };
+
+        window.cargarCliente = function(doc) {
+            const dbRef = ref(getDatabase());
+            get(child(dbRef, `clientes/${doc}`)).then((snapshot) => {
+                const data = snapshot.val();
+                document.getElementById('inNombre').value = data.nombre;
+                document.getElementById('inFondo').value = data.fondo;
+                document.getElementById('genMonto').value = data.deudaTotal;
+                window.DEUDA_TOTAL_OBJETIVO = data.deudaTotal;
+                window.cuotas = data.cuotas;
+                document.getElementById('editorSeccion').style.display = 'block';
+                actualizarEncabezado();
+                renderizarTabla();
+            });
+        };
     </script>
 </body>
 </html>
