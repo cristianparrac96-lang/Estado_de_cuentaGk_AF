@@ -20,30 +20,27 @@
             background: radial-gradient(circle at top right, #1e293b, #020617);
             color: #f8fafc;
             margin: 0;
-            overflow-x: hidden;
             min-height: 100vh;
         }
 
-        /* ANIMACIONES */
-        .fade-in { animation: fadeIn 0.8s ease forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* BUSCADOR CENTRAL (ESTILO GOOGLE) */
+        /* BUSCADOR CENTRAL */
         #search-portal {
-            position: fixed;
+            position: fixed; /* Inicia fijo al centro */
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
             width: 100%;
             max-width: 600px;
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 100;
         }
 
+        /* Al buscar, deja de ser fijo y se mueve al tope */
         #search-portal.minimized {
+            position: absolute; /* Cambia a absoluto para que se desplace al hacer scroll */
             top: 40px;
             transform: translate(-50%, 0);
-            max-width: 400px;
+            max-width: 450px;
         }
 
         .search-box {
@@ -55,30 +52,27 @@
             display: flex;
             align-items: center;
             box-shadow: 0 0 30px rgba(0, 212, 255, 0.1);
-            transition: 0.3s;
-        }
-
-        .search-box:focus-within {
-            border-color: var(--gk-cyan);
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.2);
         }
 
         .search-box input {
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 18px;
-            width: 100%;
-            outline: none;
-            text-align: center;
+            background: transparent; border: none; color: white;
+            font-size: 18px; width: 100%; outline: none; text-align: center;
         }
 
-        /* CONTENEDORES DE MÓDULOS */
+        /* FIX LOGO (Eliminar fondo blanco mediante mezcla) */
+        .logo-portal {
+            height: 70px;
+            /* Este filtro ayuda a que el blanco se vuelva transparente sobre fondo oscuro */
+            mix-blend-mode: lighten; 
+            filter: contrast(110%);
+        }
+
+        /* CONTENEDOR PRINCIPAL */
         .main-container {
             max-width: 1100px;
-            margin: 140px auto 50px auto;
+            margin: 280px auto 50px auto; /* Más espacio arriba para que no choque con buscador */
             padding: 0 20px;
-            display: none; /* Se activa al buscar */
+            display: none;
         }
 
         .glass-card {
@@ -88,42 +82,32 @@
             padding: 30px;
             border-radius: 24px;
             margin-bottom: 30px;
-            position: relative;
         }
 
         .section-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--gk-cyan);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-            border-left: 3px solid var(--gk-magenta);
-            padding-left: 10px;
+            font-size: 12px; font-weight: 600; color: var(--gk-cyan);
+            text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;
+            border-left: 3px solid var(--gk-magenta); padding-left: 10px;
         }
 
-        /* FORMULARIOS */
         .input-group { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; align-items: flex-end; }
         .input-field { display: flex; flex-direction: column; flex: 1; min-width: 180px; }
         label { font-size: 9px; font-weight: 600; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; }
-        input { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); padding: 12px; border-radius: 12px; color: white; font-size: 14px; }
+        input { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); padding: 12px; border-radius: 12px; color: white; }
 
-        /* BOTONES */
+        /* BOTONES CYBERPUNK */
         .btn-neon {
             background: var(--gk-gradient);
             color: white; border: none; padding: 12px 25px; border-radius: 12px;
             font-weight: 600; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-size: 11px;
+            box-shadow: 0 8px 15px rgba(255, 0, 127, 0.3);
+            white-space: nowrap; height: 43px;
         }
-        .btn-neon:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255, 0, 127, 0.4); }
+        .btn-neon:hover { transform: translateY(-2px); box-shadow: 0 12px 20px rgba(255, 0, 127, 0.5); }
 
-        #btn-sync {
-            display: none; /* Se activa solo con cambios */
-            width: 100%;
-            margin-top: 15px;
-            background: #2563eb;
-        }
+        #btn-sync { display: none; width: 100%; margin-top: 15px; background: #2563eb; }
 
-        /* DOCUMENTO PDF */
+        /* DOCUMENTO PDF (Uniforme y Blanco para cliente) */
         .document-page {
             background: white; color: #1a2a3a; padding: 15mm; margin-top: 40px;
             border-radius: 12px; box-shadow: 0 0 50px rgba(0,0,0,0.5); width: 215.9mm; min-height: 279.4mm; margin-inline: auto;
@@ -131,7 +115,9 @@
 
         .header-container { border-bottom: 2px solid #1a2a3a; padding-bottom: 20px; margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; }
         .logo-row { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .logo-img { max-height: 50px; max-width: 160px; object-fit: contain; }
+        
+        /* En el PDF usamos multiply para que el logo se vea bien en papel blanco */
+        .logo-img-doc { max-height: 50px; max-width: 160px; object-fit: contain; mix-blend-mode: multiply; }
         
         table { width: 100%; border-collapse: collapse; font-size: 11px; }
         th { padding: 8px; border-bottom: 1px solid #e2e8f0; color: #64748b; font-size: 9px; text-transform: uppercase; }
@@ -146,11 +132,11 @@
 </head>
 <body>
 
-    <!-- PORTAL DE BÚSQUEDA CENTRAL -->
+    <!-- PORTAL DE BÚSQUEDA -->
     <div id="search-portal">
         <div class="logo-row no-print" style="justify-content: center; gap: 40px; margin-bottom: 30px;">
-            <img src="img/Logo_GK.png" style="height: 60px;">
-            <img src="img/Logo_AF.png" style="height: 60px;">
+            <img src="img/Logo_GK.png" class="logo-portal">
+            <img src="img/Logo_AF.png" class="logo-portal">
         </div>
         <div class="search-box">
             <input type="text" id="main-search" placeholder="INGRESE DOCUMENTO PARA ESCANEAR..." onkeypress="if(event.key==='Enter') iniciarBusqueda()">
@@ -158,11 +144,9 @@
         <p id="search-msg" style="font-size: 11px; color: var(--gk-cyan); margin-top: 15px; letter-spacing: 1px;"></p>
     </div>
 
-    <!-- CONTENEDOR PRINCIPAL -->
     <div class="main-container" id="main-content">
         
-        <!-- MÓDULO SETUP (Solo para nuevos) -->
-        <div id="setup-module" class="glass-card fade-in" style="display: none;">
+        <div id="setup-module" class="glass-card" style="display: none;">
             <div class="section-title">Inicializar Nuevo Acuerdo</div>
             <div class="input-group">
                 <div class="input-field"><label>Nombre Cliente</label><input type="text" id="inNombre" oninput="actualizarEncabezado(); detectarCambio()"></div>
@@ -172,12 +156,11 @@
                 <div class="input-field"><label>Deuda Total</label><input type="number" id="genMonto"></div>
                 <div class="input-field"><label>Nro Cuotas</label><input type="number" id="genCuotas"></div>
                 <div class="input-field"><label>Fecha Inicial</label><input type="date" id="genFecha"></div>
-                <button class="btn-neon" onclick="generarPlan()">Generar Plan</button>
+                <button class="btn-neon" onclick="generarPlan()">Iniciar Plan</button>
             </div>
         </div>
 
-        <!-- MÓDULO EDICIÓN -->
-        <div id="edit-module" class="glass-card fade-in" style="display: none;">
+        <div id="edit-module" class="glass-card" style="display: none;">
             <div class="section-title">Modulación de Acuerdo</div>
             <div class="input-group">
                 <input type="hidden" id="editIndex">
@@ -190,12 +173,12 @@
             <button id="btn-sync" class="btn-neon" onclick="guardarEnNube()">☁ Sincronizar Cambios en la Nube</button>
         </div>
 
-        <!-- VISTA PREVIA DOCUMENTO -->
-        <div class="document-page fade-in">
+        <!-- DOCUMENTO -->
+        <div class="document-page">
             <header class="header-container">
                 <div class="logo-row">
-                    <img src="img/Logo_GK.png" class="logo-img">
-                    <img src="img/Logo_AF.png" class="logo-img">
+                    <img src="img/Logo_GK.png" class="logo-img-doc">
+                    <img src="img/Logo_AF.png" class="logo-img-doc">
                 </div>
                 <div class="header-title"><h1>INFORMACIÓN DE ACUERDO DE PAGO</h1></div>
             </header>
@@ -218,12 +201,12 @@
                 <tbody id="tablaCuerpo"></tbody>
                 <tfoot id="tablaTotales"></tfoot>
             </table>
-            <button class="btn-neon no-print" onclick="window.print()" style="width:100%; margin-top:30px; background:var(--dark-bg); border:1px solid var(--gk-cyan);">Imprimir PDF</button>
+            <button class="btn-neon no-print" onclick="window.print()" style="width:100%; margin-top:30px; background:var(--dark-bg); border:1px solid var(--gk-cyan);">Generar PDF</button>
             <button class="btn-neon no-print" onclick="location.reload()" style="width:100%; margin-top:10px; background:transparent; border:none; color:#64748b;">Nueva Búsqueda</button>
         </div>
     </div>
 
-    <!-- FIREBASE -->
+    <!-- FIREBASE & LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -241,28 +224,22 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // GLOBALES
         window.cuotas = [];
         window.DEUDA_TOTAL = 0;
         const hoy = new Date();
         const moneda = new Intl.NumberFormat('es-CO', {style:'currency', currency:'COP', minimumFractionDigits:0});
         document.getElementById('outEmision').innerText = hoy.toLocaleDateString('es-CO', {day:'2-digit', month:'2-digit', year:'numeric'});
 
-        // BUSCADOR INTELIGENTE
         window.iniciarBusqueda = function() {
             const doc = document.getElementById('main-search').value;
             if(!doc) return;
-            const msg = document.getElementById('search-msg');
-            msg.innerText = "ESCANEARNDO BASE DE DATOS...";
+            document.getElementById('search-msg').innerText = "ESCANEARNDO...";
 
-            const dbRef = ref(getDatabase());
-            get(child(dbRef, `clientes/${doc}`)).then((snapshot) => {
-                // Transición del buscador
+            get(child(ref(db), `clientes/${doc}`)).then((snapshot) => {
                 document.getElementById('search-portal').classList.add('minimized');
                 document.getElementById('main-content').style.display = 'block';
 
                 if (snapshot.exists()) {
-                    msg.innerText = "REGISTRO LOCALIZADO. CARGANDO DATOS...";
                     const data = snapshot.val();
                     document.getElementById('inNombre').value = data.nombre;
                     document.getElementById('inFondo').value = data.fondo;
@@ -274,12 +251,9 @@
                     actualizarEncabezado();
                     renderizarTabla();
                 } else {
-                    msg.innerText = "DOCUMENTO NO REGISTRADO.";
-                    if(confirm("Cliente no encontrado. ¿Desea inicializar protocolo de nuevo acuerdo?")) {
+                    if(confirm("Documento no registrado. ¿Desea iniciar un acuerdo nuevo?")) {
                         document.getElementById('setup-module').style.display = 'block';
                         document.getElementById('edit-module').style.display = 'none';
-                        window.cuotas = [];
-                        renderizarTabla();
                     }
                 }
             });
@@ -291,9 +265,7 @@
             document.getElementById('outFondo').innerText = document.getElementById('inFondo').value.toUpperCase();
         };
 
-        window.detectarCambio = function() {
-            document.getElementById('btn-sync').style.display = 'block';
-        };
+        window.detectarCambio = function() { document.getElementById('btn-sync').style.display = 'block'; };
 
         function ajustarDiaHabil(fecha) {
             let d = fecha.getDay();
@@ -325,9 +297,7 @@
                 });
             }
             document.getElementById('edit-module').style.display = 'block';
-            detectarCambio();
-            actualizarEncabezado();
-            renderizarTabla();
+            detectarCambio(); actualizarEncabezado(); renderizarTabla();
         };
 
         window.editar = function(i) {
@@ -356,8 +326,7 @@
                 let res = saldo % autos.length;
                 autos.forEach((pos, i) => { window.cuotas[pos].valorAc = (i === autos.length-1) ? (val+res) : val; });
             }
-            detectarCambio();
-            renderizarTabla();
+            detectarCambio(); renderizarTabla();
         };
 
         function renderizarTabla() {
@@ -386,14 +355,14 @@
                         <td class="action-col no-print"><button onclick="editar(${i})" style="background:#334155;color:white;padding:4px 8px;border-radius:6px;border:none;cursor:pointer">Edit</button></td>
                     </tr>`;
             });
-            document.getElementById('tablaTotales').innerHTML = `<tr class="fila-totales"><td colspan="2" style="text-align:right">TOTAL CONCILIADO</td><td>${moneda.format(s1)}</td><td colspan="2"></td><td>${moneda.format(s2)}</td><td colspan="2"></td></tr>`;
+            document.getElementById('tablaTotales').innerHTML = `<tr class="fila-totales"><td colspan="2" style="text-align:right">SALDO TOTAL</td><td>${moneda.format(s1)}</td><td colspan="2"></td><td>${moneda.format(s2)}</td><td colspan="2"></td></tr>`;
         }
 
         window.guardarEnNube = function() {
             const doc = document.getElementById('main-search').value;
             const data = { doc: doc, nombre: document.getElementById('inNombre').value, fondo: document.getElementById('inFondo').value, deudaTotal: window.DEUDA_TOTAL, cuotas: window.cuotas };
             set(ref(db, 'clientes/' + doc), data).then(() => {
-                alert("Sincronización Cuántica Exitosa.");
+                alert("Base de Datos Sincronizada.");
                 document.getElementById('btn-sync').style.display = 'none';
             });
         };
