@@ -100,7 +100,7 @@
             color: white; 
             box-shadow: 0 8px 15px -5px rgba(255, 0, 127, 0.4);
             white-space: nowrap;
-            height: 43px; /* Alineado con inputs */
+            height: 43px; 
         }
 
         .btn-neon:hover { 
@@ -248,8 +248,17 @@
     <script>
         let cuotas = [];
         let DEUDA_TOTAL_OBJETIVO = 0;
+        
+        // 1. Obtener fecha real
         const hoy = new Date();
         const formatoMoneda = new Intl.NumberFormat('es-CO', {style: 'currency', currency: 'COP', minimumFractionDigits: 0});
+
+        // 2. INYECTAR FECHA DE HOY AL CARGAR
+        document.getElementById('outEmision').innerText = hoy.toLocaleDateString('es-CO', {
+            day: '2-digit', 
+            month: '2-digit', 
+            year: 'numeric'
+        });
 
         function actualizarEncabezado() {
             document.getElementById('outDoc').innerText = document.getElementById('inDoc').value || '---';
@@ -364,7 +373,7 @@
 
             document.getElementById('tablaTotales').innerHTML = `
                 <tr class="fila-totales">
-                    <td colspan="2" style="text-align:right">SALDO TOTAL</td>
+                    <td colspan="2" style="text-align:right">SALDO TOTAL CONCILIADO</td>
                     <td>${formatoMoneda.format(s1)}</td>
                     <td colspan="2"></td>
                     <td>${formatoMoneda.format(s2)}</td>
