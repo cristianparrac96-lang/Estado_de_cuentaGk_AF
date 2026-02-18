@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GoKollect - Quantum Billing Portal</title>
+    <title>GoKollect - Simulador de acuerdos</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -159,20 +159,25 @@
 
     <div class="main-container" id="main-content">
         
-        <!-- MÓDULO EDITAR / ACTUALIZAR -->
+        <!-- MÓDULO DE GESTIÓN INTEGRAL -->
         <div id="edit-module" class="glass-card">
-            <div class="section-title">Panel de Gestión de Acuerdo</div>
+            <div class="section-title">Panel de Control del Acuerdo</div>
             
-            <!-- DATOS BÁSICOS EDITABLES -->
             <div class="input-group">
                 <div class="input-field"><label>Nombre Cliente</label><input type="text" id="inNombre" oninput="actualizarEncabezado(); detectarCambio()"></div>
                 <div class="input-field"><label>Fondo</label><input type="text" id="inFondo" oninput="actualizarEncabezado(); detectarCambio()"></div>
-                <div class="input-field"><label>Deuda Total (Objetivo)</label><input type="number" id="genMonto" oninput="detectarCambio()"></div>
+                <div class="input-field"><label>Deuda Total</label><input type="number" id="genMonto" oninput="detectarCambio()"></div>
             </div>
 
-            <!-- EDITOR DE CUOTAS ESPECÍFICO -->
-            <div id="specific-editor" style="border-top: 1px solid var(--border-glass); padding-top: 20px; margin-top: 10px;">
-                <label style="color: var(--gk-magenta); display: block; margin-bottom: 15px;">Editor de Cuota Seleccionada:</label>
+            <div class="input-group" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 20px;">
+                <div class="input-field"><label>Nro Cuotas</label><input type="number" id="genCuotas" oninput="detectarCambio()"></div>
+                <div class="input-field"><label>Fecha Inicio Pactada</label><input type="date" id="genFecha" oninput="detectarCambio()"></div>
+                <button class="btn-neon" onclick="generarPlan()">Re-Calcular Plan de Pagos</button>
+            </div>
+
+            <!-- EDITOR DE FILA INDIVIDUAL -->
+            <div style="padding-top: 20px;">
+                <label style="color: var(--gk-magenta); display: block; margin-bottom: 15px; font-size: 10px; font-weight: bold;">EDITOR DE CUOTA SELECCIONADA:</label>
                 <div class="input-group">
                     <input type="hidden" id="editIndex">
                     <div class="input-field"><label>Fecha Pactada</label><input type="date" id="fAc"></div>
@@ -183,16 +188,7 @@
                 </div>
             </div>
 
-            <!-- MÓDULO SETUP (Solo se muestra para clientes nuevos para generar las cuotas iniciales) -->
-            <div id="setup-controls" style="display: none; border-top: 1px solid var(--border-glass); padding-top: 20px;">
-                <div class="input-group">
-                    <div class="input-field"><label>Nro Cuotas</label><input type="number" id="genCuotas"></div>
-                    <div class="input-field"><label>Fecha Inicial</label><input type="date" id="genFecha"></div>
-                    <button class="btn-neon" onclick="generarPlan()">Generar Plan Inicial</button>
-                </div>
-            </div>
-
-            <button id="btn-sync" class="btn-neon" onclick="guardarEnNube()">☁ Guardar y Sincronizar en la Nube</button>
+            <button id="btn-sync" class="btn-neon" onclick="guardarEnNube()">☁ Sincronizar Acuerdo en la Nube</button>
         </div>
 
         <!-- DOCUMENTO -->
@@ -256,7 +252,7 @@
         window.iniciarBusqueda = function() {
             const doc = document.getElementById('main-search').value;
             if(!doc) return;
-            document.getElementById('search-msg').innerText = "ESCANEARNDO...";
+            document.getElementById('search-msg').innerText = "ESCANEARNDO SISTEMA...";
 
             get(child(ref(db), `clientes/${doc}`)).then((snapshot) => {
                 document.getElementById('search-portal').classList.add('minimized');
@@ -267,14 +263,14 @@
                     document.getElementById('inNombre').value = data.nombre;
                     document.getElementById('inFondo').value = data.fondo;
                     document.getElementById('genMonto').value = data.deudaTotal;
+                    document.getElementById('genCuotas').value = data.cuotas.length;
+                    document.getElementById('genFecha').value = data.cuotas[0].fechaAc;
                     window.DEUDA_TOTAL = data.deudaTotal;
                     window.cuotas = data.cuotas;
-                    document.getElementById('setup-controls').style.display = 'none';
                     actualizarEncabezado();
                     renderizarTabla();
                 } else {
-                    if(confirm("Documento no registrado. ¿Desea iniciar un acuerdo nuevo?")) {
-                        document.getElementById('setup-controls').style.display = 'block';
+                    if(confirm("Cliente no encontrado. ¿Desea crear un nuevo acuerdo?")) {
                         window.cuotas = [];
                         renderizarTabla();
                     }
@@ -301,18 +297,20 @@
             window.DEUDA_TOTAL = parseFloat(document.getElementById('genMonto').value);
             const num = parseInt(document.getElementById('genCuotas').value);
             const startStr = document.getElementById('genFecha').value;
-            if(!window.DEUDA_TOTAL || !num || !startStr) return;
+            if(!window.DEUDA_TOTAL || !num || !startStr) return alert("Ingrese todos los datos para el plan.");
+
+            if(!confirm("¿Desea re-calcular todo el plan? Se perderán los pagos registrados manualmente.")) return;
 
             window.cuotas = [];
             const baseDate = new Date(startStr + "T00:00:00");
-            const diaDeseado = baseDate.getDate();
+            const diaOriginal = baseDate.getDate();
             const valorBase = Math.floor(window.DEUDA_TOTAL / num);
             const residuo = window.DEUDA_TOTAL % num;
 
             for(let i=0; i<num; i++) {
                 let d = new Date(baseDate.getFullYear(), baseDate.getMonth() + i, 1);
-                let ultimoDiaMes = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-                let diaFinal = Math.min(diaDeseado, ultimoDiaMes);
+                let ultimoDia = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+                let diaFinal = Math.min(diaOriginal, ultimoDia);
                 let fechaPactada = ajustarDiaHabil(new Date(d.getFullYear(), d.getMonth(), diaFinal));
                 window.cuotas.push({
                     fechaAc: fechaPactada.toISOString().split('T')[0],
@@ -334,7 +332,6 @@
 
         window.guardarCambios = function() {
             const idx = parseInt(document.getElementById('editIndex').value);
-            // Actualizamos el Valor Objetivo por si el usuario lo cambió arriba
             window.DEUDA_TOTAL = parseFloat(document.getElementById('genMonto').value);
             
             window.cuotas[idx].fechaAc = document.getElementById('fAc').value;
@@ -343,7 +340,6 @@
             window.cuotas[idx].fechaReal = document.getElementById('fRe').value;
             window.cuotas[idx].valorReal = parseFloat(document.getElementById('vRe').value || 0);
 
-            // Balanceo Global
             let sumaManuales = 0; let autos = [];
             window.cuotas.forEach((c, i) => { if(c.manual) sumaManuales += c.valorAc; else autos.push(i); });
             if (autos.length > 0) {
@@ -387,14 +383,11 @@
         window.guardarEnNube = function() {
             const doc = document.getElementById('main-search').value;
             const data = { 
-                doc: doc, 
-                nombre: document.getElementById('inNombre').value, 
-                fondo: document.getElementById('inFondo').value, 
-                deudaTotal: parseFloat(document.getElementById('genMonto').value), 
-                cuotas: window.cuotas 
+                doc: doc, nombre: document.getElementById('inNombre').value, fondo: document.getElementById('inFondo').value, 
+                deudaTotal: parseFloat(document.getElementById('genMonto').value), cuotas: window.cuotas 
             };
             set(ref(db, 'clientes/' + doc), data).then(() => {
-                alert("Actualización exitosa en la Nube.");
+                alert("Acuerdo Sincronizado en la Nube.");
                 document.getElementById('btn-sync').style.display = 'none';
             });
         };
