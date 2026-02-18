@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GoKollect - Simulador de acuerdos</title>
+    <title>GoKollect - Quantum Billing Portal</title>
+    <!-- FUENTES E ICONOS -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
         :root {
             --gk-cyan: #00d4ff;
@@ -53,9 +56,15 @@
             box-shadow: 0 0 30px rgba(0, 212, 255, 0.1);
         }
 
+        .search-box i {
+            color: var(--gk-cyan);
+            margin-right: 15px;
+            font-size: 18px;
+        }
+
         .search-box input {
             background: transparent; border: none; color: white;
-            font-size: 18px; width: 100%; outline: none; text-align: center;
+            font-size: 18px; width: 100%; outline: none; text-align: left;
         }
 
         .logo-portal {
@@ -89,7 +98,15 @@
 
         .input-group { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; align-items: flex-end; }
         .input-field { display: flex; flex-direction: column; flex: 1; min-width: 180px; }
-        label { font-size: 9px; font-weight: 600; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; }
+        
+        label { 
+            font-size: 9px; font-weight: 600; color: #94a3b8; 
+            margin-bottom: 8px; text-transform: uppercase; 
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        label i { color: var(--gk-cyan); font-size: 11px; }
+
         input { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); padding: 12px; border-radius: 12px; color: white; font-size: 14px; }
 
         /* BOTONES */
@@ -99,6 +116,7 @@
             font-weight: 600; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-size: 11px;
             box-shadow: 0 8px 15px rgba(255, 0, 127, 0.3);
             white-space: nowrap; height: 43px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .btn-neon:hover { transform: translateY(-2px); box-shadow: 0 12px 20px rgba(255, 0, 127, 0.5); }
 
@@ -152,43 +170,43 @@
             <img src="img/Logo_AF.png" class="logo-portal">
         </div>
         <div class="search-box">
-            <input type="text" id="main-search" placeholder="INGRESE DOCUMENTO PARA ESCANEAR..." onkeypress="if(event.key==='Enter') iniciarBusqueda()">
+            <i class="fa-solid fa-radar"></i>
+            <input type="text" id="main-search" placeholder="ESCANEAR DOCUMENTO DEL CLIENTE..." onkeypress="if(event.key==='Enter') iniciarBusqueda()">
         </div>
         <p id="search-msg" style="font-size: 11px; color: var(--gk-cyan); margin-top: 15px; letter-spacing: 1px;"></p>
     </div>
 
     <div class="main-container" id="main-content">
         
-        <!-- MÓDULO DE GESTIÓN INTEGRAL -->
+        <!-- MÓDULO DE GESTIÓN -->
         <div id="edit-module" class="glass-card">
-            <div class="section-title">Panel de Control del Acuerdo</div>
+            <div class="section-title"><i class="fa-solid fa-microchip"></i> Panel de Control del Acuerdo</div>
             
             <div class="input-group">
-                <div class="input-field"><label>Nombre Cliente</label><input type="text" id="inNombre" oninput="actualizarEncabezado(); detectarCambio()"></div>
-                <div class="input-field"><label>Fondo</label><input type="text" id="inFondo" oninput="actualizarEncabezado(); detectarCambio()"></div>
-                <div class="input-field"><label>Deuda Total</label><input type="number" id="genMonto" oninput="detectarCambio()"></div>
+                <div class="input-field"><label><i class="fa-solid fa-user"></i> Nombre Cliente</label><input type="text" id="inNombre" oninput="actualizarEncabezado(); detectarCambio()"></div>
+                <div class="input-field"><label><i class="fa-solid fa-briefcase"></i> Fondo</label><input type="text" id="inFondo" oninput="actualizarEncabezado(); detectarCambio()"></div>
+                <div class="input-field"><label><i class="fa-solid fa-sack-dollar"></i> Deuda Total</label><input type="number" id="genMonto" oninput="detectarCambio()"></div>
             </div>
 
             <div class="input-group" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 20px;">
-                <div class="input-field"><label>Nro Cuotas</label><input type="number" id="genCuotas" oninput="detectarCambio()"></div>
-                <div class="input-field"><label>Fecha Inicio Pactada</label><input type="date" id="genFecha" oninput="detectarCambio()"></div>
-                <button class="btn-neon" onclick="generarPlan()">Re-Calcular Plan de Pagos</button>
+                <div class="input-field"><label><i class="fa-solid fa-list-ol"></i> Nro Cuotas</label><input type="number" id="genCuotas" oninput="detectarCambio()"></div>
+                <div class="input-field"><label><i class="fa-solid fa-calendar-days"></i> Fecha Inicio</label><input type="date" id="genFecha" oninput="detectarCambio()"></div>
+                <button class="btn-neon" onclick="generarPlan()"><i class="fa-solid fa-bolt"></i> Re-Calcular Plan</button>
             </div>
 
-            <!-- EDITOR DE FILA INDIVIDUAL -->
             <div style="padding-top: 20px;">
                 <label style="color: var(--gk-magenta); display: block; margin-bottom: 15px; font-size: 10px; font-weight: bold;">EDITOR DE CUOTA SELECCIONADA:</label>
                 <div class="input-group">
                     <input type="hidden" id="editIndex">
-                    <div class="input-field"><label>Fecha Pactada</label><input type="date" id="fAc"></div>
-                    <div class="input-field"><label>Valor Cuota</label><input type="number" id="vAc"></div>
-                    <div class="input-field"><label>Fecha Pago Real</label><input type="date" id="fRe"></div>
-                    <div class="input-field"><label>Valor Recibido</label><input type="number" id="vRe"></div>
-                    <button class="btn-neon" onclick="guardarCambios()">Equilibrar Saldo</button>
+                    <div class="input-field"><label><i class="fa-solid fa-calendar-check"></i> Fecha Pactada</label><input type="date" id="fAc"></div>
+                    <div class="input-field"><label><i class="fa-solid fa-money-bill-wave"></i> Valor Cuota</label><input type="number" id="vAc"></div>
+                    <div class="input-field"><label><i class="fa-solid fa-clock-rotate-left"></i> Fecha Pago Real</label><input type="date" id="fRe"></div>
+                    <div class="input-field"><label><i class="fa-solid fa-hand-holding-dollar"></i> Valor Recibido</label><input type="number" id="vRe"></div>
+                    <button class="btn-neon" onclick="guardarCambios()"><i class="fa-solid fa-scale-balanced"></i> Equilibrar</button>
                 </div>
             </div>
 
-            <button id="btn-sync" class="btn-neon" onclick="guardarEnNube()">☁ Sincronizar Acuerdo en la Nube</button>
+            <button id="btn-sync" class="btn-neon" onclick="guardarEnNube()"><i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar Acuerdo en la Nube</button>
         </div>
 
         <!-- DOCUMENTO -->
@@ -221,8 +239,8 @@
                 <tbody id="tablaCuerpo"></tbody>
                 <tfoot id="tablaTotales"></tfoot>
             </table>
-            <button class="btn-neon no-print" onclick="window.print()" style="width:100%; margin-top:30px; background:var(--dark-bg); border:1px solid var(--gk-cyan);">Generar PDF</button>
-            <button class="btn-neon no-print" onclick="location.reload()" style="width:100%; margin-top:10px; background:transparent; border:none; color:#64748b;">Nueva Búsqueda</button>
+            <button class="btn-neon no-print" onclick="window.print()" style="width:100%; margin-top:30px; background:var(--dark-bg); border:1px solid var(--gk-cyan);"><i class="fa-solid fa-file-pdf"></i> Generar PDF</button>
+            <button class="btn-neon no-print" onclick="location.reload()" style="width:100%; margin-top:10px; background:transparent; border:none; color:#64748b;"><i class="fa-solid fa-magnifying-glass"></i> Nueva Búsqueda</button>
         </div>
     </div>
 
@@ -252,7 +270,7 @@
         window.iniciarBusqueda = function() {
             const doc = document.getElementById('main-search').value;
             if(!doc) return;
-            document.getElementById('search-msg').innerText = "ESCANEARNDO SISTEMA...";
+            document.getElementById('search-msg').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ESCANEARNDO SISTEMA...';
 
             get(child(ref(db), `clientes/${doc}`)).then((snapshot) => {
                 document.getElementById('search-portal').classList.add('minimized');
@@ -269,7 +287,9 @@
                     window.cuotas = data.cuotas;
                     actualizarEncabezado();
                     renderizarTabla();
+                    document.getElementById('search-msg').innerText = "REGISTRO LOCALIZADO.";
                 } else {
+                    document.getElementById('search-msg').innerText = "NO SE ENCONTRARON REGISTROS.";
                     if(confirm("Cliente no encontrado. ¿Desea crear un nuevo acuerdo?")) {
                         window.cuotas = [];
                         renderizarTabla();
@@ -284,7 +304,7 @@
             document.getElementById('outFondo').innerText = document.getElementById('inFondo').value.toUpperCase();
         };
 
-        window.detectarCambio = function() { document.getElementById('btn-sync').style.display = 'block'; };
+        window.detectarCambio = function() { document.getElementById('btn-sync').style.display = 'flex'; };
 
         function ajustarDiaHabil(fecha) {
             let d = fecha.getDay();
@@ -297,9 +317,9 @@
             window.DEUDA_TOTAL = parseFloat(document.getElementById('genMonto').value);
             const num = parseInt(document.getElementById('genCuotas').value);
             const startStr = document.getElementById('genFecha').value;
-            if(!window.DEUDA_TOTAL || !num || !startStr) return alert("Ingrese todos los datos para el plan.");
+            if(!window.DEUDA_TOTAL || !num || !startStr) return;
 
-            if(!confirm("¿Desea re-calcular todo el plan? Se perderán los pagos registrados manualmente.")) return;
+            if(!confirm("¿Desea re-calcular el plan? Esto sobreescribirá los pagos actuales.")) return;
 
             window.cuotas = [];
             const baseDate = new Date(startStr + "T00:00:00");
@@ -309,8 +329,8 @@
 
             for(let i=0; i<num; i++) {
                 let d = new Date(baseDate.getFullYear(), baseDate.getMonth() + i, 1);
-                let ultimoDia = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-                let diaFinal = Math.min(diaOriginal, ultimoDia);
+                let ultimoDiaMes = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+                let diaFinal = Math.min(diaOriginal, ultimoDiaMes);
                 let fechaPactada = ajustarDiaHabil(new Date(d.getFullYear(), d.getMonth(), diaFinal));
                 window.cuotas.push({
                     fechaAc: fechaPactada.toISOString().split('T')[0],
@@ -333,7 +353,6 @@
         window.guardarCambios = function() {
             const idx = parseInt(document.getElementById('editIndex').value);
             window.DEUDA_TOTAL = parseFloat(document.getElementById('genMonto').value);
-            
             window.cuotas[idx].fechaAc = document.getElementById('fAc').value;
             window.cuotas[idx].valorAc = parseFloat(document.getElementById('vAc').value);
             window.cuotas[idx].manual = true; 
@@ -369,15 +388,15 @@
                     <tr>
                         <td>${i+1}</td>
                         <td>${c.fechaAc.split('-').reverse().join('/')}</td>
-                        <td>${moneda.format(c.valorAc)}</td>
+                        <td style="font-weight: 500;">${moneda.format(c.valorAc)}</td>
                         <td>Cuota ${i+1}</td>
                         <td>${c.fechaReal ? c.fechaReal.split('-').reverse().join('/') : '<span style="color:#d97706;font-weight:bold;">PENDIENTE</span>'}</td>
                         <td>${moneda.format(c.valorReal)}</td>
                         <td>${diff}</td>
-                        <td class="action-col no-print"><button onclick="editar(${i})" style="background:#334155;color:white;padding:4px 8px;border-radius:6px;border:none;cursor:pointer">Edit</button></td>
+                        <td class="action-col no-print"><button onclick="editar(${i})" style="background:#334155;color:white;padding:4px 8px;border-radius:6px;border:none;cursor:pointer"><i class="fa-solid fa-pen-to-square"></i></button></td>
                     </tr>`;
             });
-            document.getElementById('tablaTotales').innerHTML = `<tr class="fila-totales"><td colspan="2" style="text-align:right">SALDO TOTAL</td><td>${moneda.format(s1)}</td><td colspan="2"></td><td>${moneda.format(s2)}</td><td colspan="2"></td></tr>`;
+            document.getElementById('tablaTotales').innerHTML = `<tr class="fila-totales"><td colspan="2" style="text-align:right">SALDO TOTAL CONCILIADO</td><td>${moneda.format(s1)}</td><td colspan="2"></td><td>${moneda.format(s2)}</td><td colspan="2"></td></tr>`;
         }
 
         window.guardarEnNube = function() {
